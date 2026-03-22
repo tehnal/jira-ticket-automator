@@ -93,11 +93,11 @@ def get_account_id(jira, name):
                 print(f"Using partial match: {user.displayName}")
                 return user.accountId
                 
-        print(f"❌ No match found for assignee name: {name}")
+        print(f" No match found for assignee name: {name}")
         return None
         
     except Exception as e:
-        print(f"❌ Error searching for user '{name}': {e}")
+        print(f" Error searching for user '{name}': {e}")
         return None
 
 def validate_parent_ticket(jira, parent_key):
@@ -106,10 +106,10 @@ def validate_parent_ticket(jira, parent_key):
         
     try:
         parent_issue = jira.issue(parent_key)
-        print(f"✅ Parent ticket {parent_key} found: {parent_issue.fields.summary}")
+        print(f" Parent ticket {parent_key} found: {parent_issue.fields.summary}")
         return True
     except Exception as e:
-        print(f"❌ Error validating parent ticket {parent_key}: {e}")
+        print(f" Error validating parent ticket {parent_key}: {e}")
         return False
 
 def find_subtask_issue_type(jira, project_key):
@@ -119,7 +119,7 @@ def find_subtask_issue_type(jira, project_key):
         # Look for sub-task types first
         for issue_type in issue_types:
             if hasattr(issue_type, 'subtask') and issue_type.subtask:
-                print(f"✅ Found sub-task type: {issue_type.name}")
+                print(f" Found sub-task type: {issue_type.name}")
                 return issue_type.name
                 
         # If no sub-task types found, try common names
@@ -127,14 +127,14 @@ def find_subtask_issue_type(jira, project_key):
         for subtask_name in subtask_names:
             for issue_type in issue_types:
                 if issue_type.name == subtask_name:
-                    print(f"✅ Using issue type: {issue_type.name}")
+                    print(f" Using issue type: {issue_type.name}")
                     return issue_type.name
                     
-        print("❌ No suitable sub-task issue type found")
+        print(" No suitable sub-task issue type found")
         return None
         
     except Exception as e:
-        print(f"❌ Error getting issue types: {e}")
+        print(f" Error getting issue types: {e}")
         return None
 
 def create_ticket(jira, summary, description, assignee=None, parent=None, work_type=None, components=None, priority=None, project_key='KAN'):
@@ -148,7 +148,7 @@ def create_ticket(jira, summary, description, assignee=None, parent=None, work_t
     if parent:
         subtask_type = find_subtask_issue_type(jira, project_key)
         if not subtask_type:
-            print("❌ Could not find valid sub-task issue type. Creating as regular task without parent.")
+            print(" Could not find valid sub-task issue type. Creating as regular task without parent.")
             issue_dict['issuetype'] = {'name': 'Task'}
             parent = None
         else:
@@ -168,11 +168,11 @@ def create_ticket(jira, summary, description, assignee=None, parent=None, work_t
     
     try:
         new_issue = jira.create_issue(fields=issue_dict)
-        print(f"✅ Successfully created issue: {new_issue.key}")
+        print(f" Successfully created issue: {new_issue.key}")
         return new_issue
         
     except Exception as e:
-        print(f"❌ Failed to create issue: {e}")
+        print(f" Failed to create issue: {e}")
         raise
 
 
@@ -198,7 +198,7 @@ class TicketRequest(BaseModel):
 async def root():
     """Health check endpoint"""
     return {
-        "message": "🚀 Your JIRA AI Assistant is running!", 
+        "message": " Your JIRA AI Assistant is running!", 
         "status": "healthy",
         "version": "1.0.0"
     }
@@ -242,7 +242,7 @@ async def configure_jira(config: JiraConfig):
         
         return {
             "success": True, 
-            "message": f"✅ JIRA connected successfully as {current_user}"
+            "message": f" JIRA connected successfully as {current_user}"
         }
         
     except Exception as e:
@@ -287,7 +287,7 @@ async def create_ticket_api(request: TicketRequest):
         if assignee_name:
             account_id = get_account_id(jira, assignee_name)
             if account_id:
-                print(f"✅ Found assignee: {assignee_name} -> {account_id}")
+                print(f" Found assignee: {assignee_name} -> {account_id}")
         
         # Step 3: Validate parent ticket (your existing logic)
         parent_key = ticket_data.get("parent")
@@ -319,13 +319,13 @@ async def create_ticket_api(request: TicketRequest):
                 "parent": parent_key,
                 "priority": ticket_data.get('priority')
             },
-            "message": f"🎉 Ticket {issue.key} created successfully!"
+            "message": f" Ticket {issue.key} created successfully!"
         }
         
     except HTTPException:
         raise
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        print(f" Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/dashboard/{user_id}")
@@ -347,7 +347,7 @@ async def get_dashboard(user_id: str):
 
 if __name__ == "__main__":
     import uvicorn
-    print("🚀 Starting JIRA AI Assistant API...")
-    print("📖 Interactive docs: http://localhost:8000/docs")
-    print("🏠 Health check: http://localhost:8000")
+    print("Starting JIRA AI Assistant API...")
+    print("Interactive docs: http://localhost:8000/docs")
+    print("Health check: http://localhost:8000")
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
