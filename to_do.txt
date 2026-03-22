@@ -1,0 +1,6 @@
+Backend Checklist
+
+As of now, the auth/login and jira/configure are taking in the same info: server, email, token. So i should likely be able to
+get rid of one of them. Simplifying this is the main goal. I want it to be super simple: login, make ticket.
+
+Only after getting this rock solid for myself, THEN I can make a frontend.
