@@ -146,7 +146,7 @@ def create_ticket(jira, summary, description, assignee=None, parent=None, work_t
     if parent:
         subtask_type = find_subtask_issue_type(jira, 'KAN')
         if not subtask_type:
-            print("❌ Could not find valid sub-task issue type. Creating as regular task without parent.")
+            print("Could not find valid sub-task issue type. Creating as regular task without parent.")
             issue_dict['issuetype'] = {'name': 'Task'}
             parent = None  # Remove parent since we can't create sub-task
         else:
